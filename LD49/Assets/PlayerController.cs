@@ -18,6 +18,8 @@ public class PlayerController : MonoBehaviour
 
     public Transform leftPoint, rightPoint;
 
+    public Animator animator;
+
     void Start() {
         
     }
@@ -48,6 +50,7 @@ public class PlayerController : MonoBehaviour
         walkSpeedToSet = Mathf.SmoothDamp(walkSpeedToSet, walkCalc, ref walkSpeedSmoothing, 0.2f);
 
         transform.Translate(-Vector2.right * ((slideSpeedToSet - (walkSpeedToSet)) * Time.deltaTime));
+        animator.SetFloat("HorSpeed", (slideSpeedToSet - (walkSpeedToSet * Time.deltaTime)));
 
         Vector3 pos = transform.localPosition;
         pos.x =  Mathf.Clamp(transform.localPosition.x, -10f, 10f);

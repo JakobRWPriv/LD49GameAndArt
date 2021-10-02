@@ -39,6 +39,7 @@
      <Compile Include="Assets\PlatformHandler.cs" />
      <Compile Include="Assets\PlayerController.cs" />
      <Compile Include="Assets\FixRotation.cs" />
+     <Compile Include="Assets\PlayerPivotController.cs" />
     <Reference Include="UnityEngine">
         <HintPath>C:/Program Files/Unity/2020.3.12f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
     </Reference>
