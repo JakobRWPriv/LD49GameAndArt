@@ -10,6 +10,7 @@ public class LookAtMouse : MonoBehaviour
     float angle;
     float angleToSet;
     float angleSmoothing;
+    public float speed;
     public bool lookAwayFromMouse;
 
 	void Update () {
@@ -20,10 +21,10 @@ public class LookAtMouse : MonoBehaviour
         if (!lookAwayFromMouse) {
             angle = Mathf.Atan2(offset.y, offset.x) * Mathf.Rad2Deg;
         } else {
-            angle = Mathf.Atan2(offset.y, offset.x) * (Mathf.Rad2Deg - 180);
+            angle = Mathf.Atan2(offset.y, offset.x) * (Mathf.Rad2Deg - 90);
         }
 
-        angleToSet = Mathf.SmoothDampAngle(angleToSet, angle, ref angleSmoothing, 0.1f);
+        angleToSet = Mathf.SmoothDampAngle(angleToSet, angle, ref angleSmoothing, speed);
         transform.eulerAngles = new Vector3(0, 0, angleToSet);
     }
 }

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Lookat
   - LookAt
+  - PlayerBullet
   layers:
   - Default
   - TransparentFX

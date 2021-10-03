@@ -24,16 +24,16 @@ public class PlayerController : MonoBehaviour
 
     public Transform leftPoint, rightPoint;
     public Transform ballTransform;
+    public Transform bulletSpawnPos;
 
     public Animator legAnimator;
 
     public ParticleSystem sweatParticles;
 
     public GameObject mouthNormal, mouthOpen, mouthWorried;
-
-    void Start() {
-        
-    }
+    public GameObject leftArmNormal, leftArmShoot, rightArmNormal, rightArmShoot;
+    public Transform leftShootPos, rightShootPos;
+    public GameObject bullet;
 
     bool playedSweatParticles;
     float deadSpeed = 1;
@@ -41,6 +41,10 @@ public class PlayerController : MonoBehaviour
         if (isDead) {
             transform.position = new Vector3(transform.position.x, transform.position.y - deadSpeed, 0);
             return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0)) {
+            Shoot();
         }
 
         if (transform.localPosition.x <= 0) {
@@ -105,6 +109,30 @@ public class PlayerController : MonoBehaviour
         Vector3 pos = transform.localPosition;
         pos.x =  Mathf.Clamp(transform.localPosition.x, -10f, 10f);
         transform.localPosition = pos;
+
+        var playerScreenPos = Camera.main.WorldToScreenPoint(transform.position);
+        var mousePos = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y);
+        if (mousePos.x <= playerScreenPos.x) {
+            leftArmNormal.SetActive(false);
+            leftArmShoot.SetActive(true);
+
+            rightArmNormal.SetActive(true);
+            rightArmShoot.SetActive(false);
+
+            bulletSpawnPos = leftShootPos;
+        } else {
+            rightArmNormal.SetActive(false);
+            rightArmShoot.SetActive(true);
+
+            leftArmNormal.SetActive(true);
+            leftArmShoot.SetActive(false);
+
+            bulletSpawnPos = rightShootPos;
+        }
+    }
+
+    void Shoot() {
+        Instantiate(bullet, bulletSpawnPos.position, Quaternion.identity);
     }
 /*
     void FixedUpdate() {
