@@ -4,15 +4,25 @@ using UnityEngine;
 
 public class PlayerPivotController : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    
+    float leanDirToSet;
+    float leanDirSmoothing;
 
-    // Update is called once per frame
     void Update()
     {
-        
+        float leanDir = 0;
+
+        if (Input.GetKey(KeyCode.LeftArrow)) {
+            leanDir = 20;
+        }
+        if (Input.GetKey(KeyCode.RightArrow)) {
+            leanDir = -20;
+        }
+        if ((!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))) {
+            leanDir = 0;
+        }
+
+        leanDirToSet = Mathf.SmoothDamp(leanDirToSet, leanDir, ref leanDirSmoothing, 0.3f);
+        transform.eulerAngles = new Vector3(0, 0, leanDirToSet);
     }
 }

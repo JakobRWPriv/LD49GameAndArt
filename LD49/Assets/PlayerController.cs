@@ -16,22 +16,45 @@ public class PlayerController : MonoBehaviour
     public float walkCalc;
     public float walkSpeed;
 
-    public Transform leftPoint, rightPoint;
+    public bool isNearEdge;
+    public bool isDead;
 
-    public Animator animator;
+    public float rotateDirToSet;
+    float rotateDirSmoothing;
+
+    public Transform leftPoint, rightPoint;
+    public Transform ballTransform;
+
+    public Animator legAnimator;
+
+    public ParticleSystem sweatParticles;
+
+    public GameObject mouthNormal, mouthOpen, mouthWorried;
 
     void Start() {
         
     }
 
+    bool playedSweatParticles;
+    float deadSpeed = 1;
     void Update() {
-        if (transform.position.x <= 0) {
-            platform.speed = (Vector3.Distance(transform.position, leftPoint.position) / 10f);
-        } else if (transform.position.x > 0) {
-            platform.speed = (Vector3.Distance(transform.position, rightPoint.position) / 10f);
+        if (isDead) {
+            transform.position = new Vector3(transform.position.x, transform.position.y - deadSpeed, 0);
+            return;
         }
 
-        platform.rotationToReach = -(transform.position.x * 12f);
+        if (transform.localPosition.x <= 0) {
+            platform.speed = (Vector3.Distance(transform.position, leftPoint.position) / 10f);
+        } else if (transform.localPosition.x > 0) {
+            platform.speed = (Vector3.Distance(transform.position, rightPoint.position) / 10f);
+        }
+        if (transform.localPosition.x <= -7.3f) {
+            Die();
+        } else if (transform.localPosition.x >= 7.3f) {
+            Die();
+        }
+
+        platform.rotationToReach = -(transform.position.x * 6f);
         slideSpeed = platform.speed;
 
         float slideCalc = ((platform.rotationToReach / 15f));
@@ -50,7 +73,34 @@ public class PlayerController : MonoBehaviour
         walkSpeedToSet = Mathf.SmoothDamp(walkSpeedToSet, walkCalc, ref walkSpeedSmoothing, 0.2f);
 
         transform.Translate(-Vector2.right * ((slideSpeedToSet - (walkSpeedToSet)) * Time.deltaTime));
-        animator.SetFloat("HorSpeed", (slideSpeedToSet - (walkSpeedToSet * Time.deltaTime)));
+        legAnimator.SetFloat("HorSpeed", (slideSpeedToSet - (walkSpeedToSet * Time.deltaTime)));
+
+        float superRunFloat = Mathf.Abs((slideSpeedToSet - (walkSpeedToSet * Time.deltaTime))) * 2;
+
+        legAnimator.SetBool("LeftKey", Input.GetKey(KeyCode.LeftArrow));
+        legAnimator.SetBool("RightKey", Input.GetKey(KeyCode.RightArrow));
+        legAnimator.SetBool("SuperRun", (superRunFloat > 3.9f) || (superRunFloat < -3.9f));
+
+        if ((superRunFloat > 3.9f) || (superRunFloat < -3.9f)) {
+            if (!playedSweatParticles) {
+                playedSweatParticles = true;
+                sweatParticles.Play();
+
+                mouthNormal.SetActive(false);
+                mouthWorried.SetActive(true);
+            }
+        } else {
+            sweatParticles.Stop(false, ParticleSystemStopBehavior.StopEmitting);
+            playedSweatParticles = false;
+
+            mouthNormal.SetActive(true);
+            mouthWorried.SetActive(false);
+        }
+
+        rotateDirToSet = Mathf.SmoothDamp(rotateDirToSet, walkCalc == 0 ? -2 : 2, ref rotateDirSmoothing, 0.2f);
+
+        legAnimator.speed = Mathf.Abs((slideSpeedToSet - (walkSpeedToSet * Time.deltaTime))) * 2;
+        ballTransform.Rotate(0, 0, (slideSpeedToSet - (walkSpeedToSet * Time.deltaTime)) * -(rotateDirToSet));
 
         Vector3 pos = transform.localPosition;
         pos.x =  Mathf.Clamp(transform.localPosition.x, -10f, 10f);
@@ -65,4 +115,10 @@ public class PlayerController : MonoBehaviour
             rb2d.AddForce(transform.right * 2f);
         }
     }*/
+
+    void Die() {
+        print("DIE");
+        transform.parent = null;
+        isDead = true;
+    }
 }
