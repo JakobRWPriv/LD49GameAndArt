@@ -12,6 +12,9 @@ public class PlayerBullet : MonoBehaviour
     float angle;
     public float speed;
 
+    public ParticleSystem particleSystem;
+    public Collider2D myCollider;
+
     void Awake() {
         mousePos = Input.mousePosition;
         myWorldPos = Camera.main.WorldToScreenPoint(transform.position);
@@ -33,6 +36,17 @@ public class PlayerBullet : MonoBehaviour
 
     IEnumerator Destroy() {
         yield return new WaitForSeconds(10f);
+        Destroy(gameObject);
+    }
+
+    public void HitEnemyDestroy() {
+        particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        myCollider.enabled = false;
+        StartCoroutine(DestroyShort());
+    }
+
+    IEnumerator DestroyShort() {
+        yield return new WaitForSeconds(2f);
         Destroy(gameObject);
     }
 }

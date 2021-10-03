@@ -15,7 +15,8 @@ public class Enemy : MonoBehaviour
         if (otherCollider.tag == "PlayerBullet") {
             TakeDamage();
             KnockedBack(otherCollider.GetComponent<PlayerBullet>(), 30f);
-            Destroy(otherCollider.gameObject);
+
+            otherCollider.GetComponent<PlayerBullet>().HitEnemyDestroy();
         }
     }
 

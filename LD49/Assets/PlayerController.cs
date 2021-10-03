@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public Transform bulletSpawnPos;
 
     public Animator legAnimator;
+    public Animator animator;
 
     public ParticleSystem sweatParticles;
 
@@ -34,6 +35,9 @@ public class PlayerController : MonoBehaviour
     public GameObject leftArmNormal, leftArmShoot, rightArmNormal, rightArmShoot;
     public Transform leftShootPos, rightShootPos;
     public GameObject bullet;
+
+    public bool isControllingPlatformRotation = true;
+    Coroutine platformCoroutine;
 
     bool playedSweatParticles;
     float deadSpeed = 1;
@@ -45,6 +49,8 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Mouse0)) {
             Shoot();
+            animator.ResetTrigger("Shoot");
+            animator.SetTrigger("Shoot");
         }
 
         if (transform.localPosition.x <= 0) {
@@ -57,8 +63,18 @@ public class PlayerController : MonoBehaviour
         } else if (transform.localPosition.x >= 7.3f) {
             Die();
         }
+        if (platform.rotationToReach > 80 || platform.rotationToReach < -80) {
+            Die();
+        }
 
-        platform.rotationToReach = -(transform.position.x * 6f);
+        if (isControllingPlatformRotation) {
+            platform.rotationToReach = -(transform.position.x * 8f);
+        } else {
+            if (Input.GetKeyDown(KeyCode.R)) {
+                platform.rotationToReach = Random.Range(-50f, 50f);
+            }
+        }
+
         slideSpeed = platform.speed;
 
         float slideCalc = ((platform.rotationToReach / 15f));
@@ -143,6 +159,33 @@ public class PlayerController : MonoBehaviour
             rb2d.AddForce(transform.right * 2f);
         }
     }*/
+
+
+    public void PlatformHit(GameObject otherCollider) {
+        print("HELLO");
+        if (platformCoroutine != null) {
+            StopCoroutine(platformCoroutine);
+        }
+        platformCoroutine = StartCoroutine(LoseControlOfPlatform());
+        Destroy(otherCollider);
+    }
+
+    public IEnumerator LoseControlOfPlatform() {
+        isControllingPlatformRotation = false;
+
+        if (platform.rotationToReach >= 0) {
+            platform.rotationToReach += 10f;
+            print("MORE");
+        } else {
+            platform.rotationToReach -= 10f;
+            print("LESS");
+        }
+
+        yield return new WaitForSeconds(2f);
+
+        isControllingPlatformRotation = true;
+        platformCoroutine = null;
+    }
 
     void Die() {
         print("DIE");

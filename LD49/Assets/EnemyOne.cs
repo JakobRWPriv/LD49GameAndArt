@@ -13,7 +13,7 @@ public class EnemyOne : Enemy
 
 
     void Update() {
-        followPos = player.transform.position + new Vector3(0, 0.5f, 0);
+        followPos = new Vector3(0, -3.44f, 0);
         dir = (followPos - transform.position).normalized;
     }
 
