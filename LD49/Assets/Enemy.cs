@@ -10,11 +10,32 @@ public class Enemy : MonoBehaviour
     public bool brake;
     public float brakeMultiplication = 0.9f;
     Coroutine brakeCo;
+    public bool shouldTakeKnockback = true;
+
+    public GameObject deathParticles;
+    public GameObject deathParticlesBig;
+
+    public bool isBig;
+
+    public SpriteRenderer[] allSprites;
+
+    public virtual void Awake() {
+        allSprites = GetComponentsInChildren<SpriteRenderer>(true);
+    }
+
+    public void ChangeOrderInLayer(int orderInLayerToAdd) {
+        foreach(SpriteRenderer sr in allSprites) {
+            sr.sortingOrder += orderInLayerToAdd;
+        }
+        print("CHANGE " + gameObject.name + " BY " + orderInLayerToAdd);
+    }
 
     void OnTriggerEnter2D(Collider2D otherCollider) {
         if (otherCollider.tag == "PlayerBullet") {
             TakeDamage();
-            KnockedBack(otherCollider.GetComponent<PlayerBullet>(), 30f);
+            if (shouldTakeKnockback) {
+                KnockedBack(otherCollider.GetComponent<PlayerBullet>(), 30f);
+            }
 
             otherCollider.GetComponent<PlayerBullet>().HitEnemyDestroy();
         }
@@ -25,6 +46,8 @@ public class Enemy : MonoBehaviour
 
         if (health < 1) {
             Die();
+        } else {
+            AudioHandler.Instance.PlaySound(AudioHandler.Instance.enemyHurt1, 0.5f, Random.Range(0.9f, 1.5f));
         }
 
         StartCoroutine(DamageShakeCo());
@@ -59,7 +82,13 @@ public class Enemy : MonoBehaviour
         damageShakeObject.transform.localPosition = new Vector2(0, 0);
     }
 
-    void Die() {
+    public void Die() {
+        AudioHandler.Instance.PlaySound(AudioHandler.Instance.enemyHurt1, 0.7f, Random.Range(0.6f, 0.7f));
+        if (!isBig) {
+            Instantiate(deathParticles, transform.position, Quaternion.identity);
+        } else {
+            Instantiate(deathParticlesBig, transform.position, Quaternion.identity);
+        }
         Destroy(gameObject);
     }
 }

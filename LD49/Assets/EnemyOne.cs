@@ -6,15 +6,33 @@ public class EnemyOne : Enemy
 {
     public Vector3 dir;
     public Vector3 followPos;
+    public Vector3 offset;
     public PlayerController player;
 
     public float acceleration;
     public float maxSpeed;
 
+    public float waitTime;
+    float timeToReach;
+
+    void Start() {
+        if (transform.position.x < 0) {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+    }
 
     void Update() {
-        followPos = new Vector3(0, -3.44f, 0);
+        if (Input.GetKeyDown(KeyCode.A)) {
+            ChangeOrderInLayer(500);
+        }
+
+        followPos = new Vector3(0, 6.7f, 0) + offset;
         dir = (followPos - transform.position).normalized;
+
+        if (Time.time > timeToReach) {
+            timeToReach = Time.time + (waitTime + Random.Range(-0.5f, 0.5f));
+            offset = new Vector3(0, Random.Range(-2f, 2f), 0);
+        }
     }
 
     void FixedUpdate() {

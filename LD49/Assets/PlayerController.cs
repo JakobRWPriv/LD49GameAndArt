@@ -39,8 +39,11 @@ public class PlayerController : MonoBehaviour
     public bool isControllingPlatformRotation = true;
     Coroutine platformCoroutine;
 
+    public ScoreHandler scoreHandler;
+
     bool playedSweatParticles;
     float deadSpeed = 1;
+    public float windPower;
     void Update() {
         if (isDead) {
             transform.position = new Vector3(transform.position.x, transform.position.y - deadSpeed, 0);
@@ -92,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
         walkSpeedToSet = Mathf.SmoothDamp(walkSpeedToSet, walkCalc, ref walkSpeedSmoothing, 0.2f);
 
-        transform.Translate(-Vector2.right * ((slideSpeedToSet - (walkSpeedToSet)) * Time.deltaTime));
+        transform.Translate(-Vector2.right * ((slideSpeedToSet - walkSpeedToSet - windPower) * Time.deltaTime));
         legAnimator.SetFloat("HorSpeed", (slideSpeedToSet - (walkSpeedToSet * Time.deltaTime)));
 
         float superRunFloat = Mathf.Abs((slideSpeedToSet - (walkSpeedToSet * Time.deltaTime))) * 2;
@@ -149,6 +152,9 @@ public class PlayerController : MonoBehaviour
 
     void Shoot() {
         Instantiate(bullet, bulletSpawnPos.position, Quaternion.identity);
+        float pitch = Random.Range(1.2f, 1.5f);
+        AudioHandler.Instance.PlaySound(AudioHandler.Instance.playerShoot, 0.2f, pitch);
+        AudioHandler.Instance.PlaySound(AudioHandler.Instance.playerShoot2, 0.2f, pitch);
     }
 /*
     void FixedUpdate() {
@@ -181,15 +187,16 @@ public class PlayerController : MonoBehaviour
             print("LESS");
         }
 
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(3f);
 
         isControllingPlatformRotation = true;
         platformCoroutine = null;
     }
 
     void Die() {
-        print("DIE");
         transform.parent = null;
         isDead = true;
+        legAnimator.speed = 0;
+        scoreHandler.GameOver();
     }
 }

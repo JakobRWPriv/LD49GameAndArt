@@ -12,8 +12,10 @@ public class PlayerBullet : MonoBehaviour
     float angle;
     public float speed;
 
-    public ParticleSystem particleSystem;
+    public ParticleSystem myParticleSystem;
     public Collider2D myCollider;
+
+    public ParticleSystem destroyParticles;
 
     void Awake() {
         mousePos = Input.mousePosition;
@@ -40,7 +42,8 @@ public class PlayerBullet : MonoBehaviour
     }
 
     public void HitEnemyDestroy() {
-        particleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        myParticleSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+        destroyParticles.Play();
         myCollider.enabled = false;
         StartCoroutine(DestroyShort());
     }
