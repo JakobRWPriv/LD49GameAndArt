@@ -45528,18 +45528,18 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Balance with arrow keys
+  m_text: 'Balance with arrow keys/WASD
 
     Shoot with left mouse button
 
 
-    Stay balanced
-    on the board while protecting your Gem of Stability!
+    Stay
+    balanced on the board while protecting your Gem of Stability!
 
 
-    Enemies will not attack
-    you, but if they touch the gem the board will become unstable for a little bit.
-    If you fall off, it''s game over!'
+    Enemies will
+    not attack you, but if they touch the gem the board will become unstable for
+    a little bit. If you fall off, it''s game over!'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}

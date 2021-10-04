@@ -45,6 +45,9 @@ public class PlayerController : MonoBehaviour
     float deadSpeed = 1;
     public float windPower;
     void Update() {
+        if (Input.GetKeyDown(KeyCode.F)) {
+            Time.timeScale = 0;
+        }
         if (isDead) {
             transform.position = new Vector3(transform.position.x, transform.position.y - deadSpeed, 0);
             return;
@@ -83,13 +86,13 @@ public class PlayerController : MonoBehaviour
         float slideCalc = ((platform.rotationToReach / 15f));
         slideSpeedToSet = Mathf.SmoothDamp(slideSpeedToSet, slideCalc, ref slideSpeedSmoothing, slideSpeed);
 
-        if (Input.GetKey(KeyCode.LeftArrow)) {
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) {
             walkCalc = -walkSpeed;
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)) {
             walkCalc = walkSpeed;
         }
-        if ((!Input.GetKey(KeyCode.LeftArrow) && !Input.GetKey(KeyCode.RightArrow))) {
+        if ((!(Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A)) && !(Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D)))) {
             walkCalc = 0;
         }
 
@@ -100,8 +103,8 @@ public class PlayerController : MonoBehaviour
 
         float superRunFloat = Mathf.Abs((slideSpeedToSet - (walkSpeedToSet * Time.deltaTime))) * 2;
 
-        legAnimator.SetBool("LeftKey", Input.GetKey(KeyCode.LeftArrow));
-        legAnimator.SetBool("RightKey", Input.GetKey(KeyCode.RightArrow));
+        legAnimator.SetBool("LeftKey", Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A));
+        legAnimator.SetBool("RightKey", Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D));
         legAnimator.SetBool("SuperRun", (superRunFloat > 3.9f) || (superRunFloat < -3.9f));
 
         if ((superRunFloat > 3.9f) || (superRunFloat < -3.9f)) {
